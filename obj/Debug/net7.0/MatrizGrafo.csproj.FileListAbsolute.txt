@@ -1,0 +1,14 @@
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\obj\Debug\net7.0\MatrizGrafo.GeneratedMSBuildEditorConfig.editorconfig
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\obj\Debug\net7.0\MatrizGrafo.AssemblyInfoInputs.cache
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\obj\Debug\net7.0\MatrizGrafo.AssemblyInfo.cs
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\obj\Debug\net7.0\MatrizGrafo.csproj.CoreCompileInputs.cache
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\bin\Debug\net7.0\MatrizGrafo.exe
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\bin\Debug\net7.0\MatrizGrafo.deps.json
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\bin\Debug\net7.0\MatrizGrafo.runtimeconfig.json
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\bin\Debug\net7.0\MatrizGrafo.dll
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\bin\Debug\net7.0\MatrizGrafo.pdb
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\obj\Debug\net7.0\MatrizGrafo.dll
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\obj\Debug\net7.0\refint\MatrizGrafo.dll
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\obj\Debug\net7.0\MatrizGrafo.pdb
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\obj\Debug\net7.0\MatrizGrafo.genruntimeconfig.cache
+D:\mef\IF\Linguagem I\Semana 13 - Trabalho Grafo\ModeloGrafo\MatrizGrafo\obj\Debug\net7.0\ref\MatrizGrafo.dll
