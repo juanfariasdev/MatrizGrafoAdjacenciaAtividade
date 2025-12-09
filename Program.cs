@@ -15,6 +15,27 @@ namespace MatrizGrafo
                 System.Console.WriteLine();
             }
         }
+        
+        static int menu()
+        {
+            Console.WriteLine("\n=== Menu de Opções ===");
+            Console.WriteLine("1. Adicionar Aresta");
+            Console.WriteLine("2. Remover Aresta");
+            Console.WriteLine("3. Mostrar Matriz");
+            Console.WriteLine("4. Verificar Propriedades");
+            Console.WriteLine("5. Matriz R infinito");
+            Console.WriteLine("6. Matriz Conexividade");
+            Console.WriteLine("0. Sair");
+            Console.Write("\nEscolha uma opção: ");
+            
+            int opcao;
+            while (!int.TryParse(Console.ReadLine(), out opcao))
+            {
+                Console.Write("Entrada inválida. Digite um número: ");
+            }
+            return opcao;
+        }
+        
         static void Main(string[] args)
         {
             Grafo meuGrafo = new Grafo(10);
@@ -22,7 +43,7 @@ namespace MatrizGrafo
             int opcao=0;
             do
             {
-               // opcao = menu();
+               opcao = menu();
                 switch (opcao)
                 {
                     case 1:
