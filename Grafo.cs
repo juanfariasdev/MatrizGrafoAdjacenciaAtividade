@@ -1,3 +1,5 @@
+using SkiaSharp;
+
 namespace MatrizGrafo
 {
     class Grafo
@@ -203,6 +205,228 @@ namespace MatrizGrafo
             }
         }
 
+        public void verificarAntissimetricaDetalhado()
+        {
+            Console.WriteLine("\n=== Verificação Antissimétrica Detalhada ===");
+            Console.WriteLine("Propriedade: Se R[i,j]=1 e R[j,i]=1, então i=j");
+            Console.WriteLine("Ou seja: não pode haver arestas bidirecionais entre vértices diferentes\n");
+            
+            bool eAntissimetrica = true;
+            List<string> violacoes = new List<string>();
+            
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = i + 1; j < numeroDeVertices; j++)
+                {
+                    if (matrizAdjacencia[i, j] == 1 && matrizAdjacencia[j, i] == 1)
+                    {
+                        eAntissimetrica = false;
+                        violacoes.Add($"Arestas bidirecionais: {i}↔{j}");
+                    }
+                }
+            }
+            
+            if (eAntissimetrica)
+            {
+                Console.WriteLine("✓ O grafo É ANTISSIMÉTRICO");
+                Console.WriteLine("  Não há arestas bidirecionais entre vértices diferentes");
+            }
+            else
+            {
+                Console.WriteLine("✗ O grafo NÃO É ANTISSIMÉTRICO");
+                Console.WriteLine($"  Encontradas {violacoes.Count} violação(ões):");
+                foreach (string v in violacoes)
+                {
+                    Console.WriteLine($"    - {v}");
+                }
+            }
+        }
+
+        public void verificarIrreflexivaDetalhado()
+        {
+            Console.WriteLine("\n=== Verificação Irreflexiva Detalhada ===");
+            Console.WriteLine("Propriedade: R[i,i] = 0 para todo vértice i");
+            Console.WriteLine("Ou seja: nenhum vértice pode ter laço\n");
+            
+            bool eIrreflexiva = true;
+            List<int> verticesComLaco = new List<int>();
+            
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                if (matrizAdjacencia[i, i] == 1)
+                {
+                    eIrreflexiva = false;
+                    verticesComLaco.Add(i);
+                }
+            }
+            
+            if (eIrreflexiva)
+            {
+                Console.WriteLine("✓ O grafo É IRREFLEXIVO");
+                Console.WriteLine("  Nenhum vértice possui laço");
+            }
+            else
+            {
+                Console.WriteLine("✗ O grafo NÃO É IRREFLEXIVO");
+                Console.WriteLine($"  {verticesComLaco.Count} vértice(s) com laço:");
+                foreach (int v in verticesComLaco)
+                {
+                    Console.WriteLine($"    - Vértice {v}: R[{v},{v}] = 1");
+                }
+            }
+        }
+
+        public void verificarFortementeConexo()
+        {
+            Console.WriteLine("\n=== Verificação Fortemente Conexo ===");
+            Console.WriteLine("Propriedade: Existe caminho entre qualquer par de vértices");
+            Console.WriteLine("Verifica se R∞ tem todos elementos = 1\n");
+            
+            int[,] rInf = obterRInfinito();
+            bool eFortementeConexo = true;
+            int paresDesconectados = 0;
+            
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = 0; j < numeroDeVertices; j++)
+                {
+                    if (rInf[i, j] == 0)
+                    {
+                        eFortementeConexo = false;
+                        paresDesconectados++;
+                    }
+                }
+            }
+            
+            if (eFortementeConexo)
+            {
+                Console.WriteLine("✓ O grafo É FORTEMENTE CONEXO");
+                Console.WriteLine("  Existe caminho entre qualquer par de vértices");
+            }
+            else
+            {
+                Console.WriteLine("✗ O grafo NÃO É FORTEMENTE CONEXO");
+                Console.WriteLine($"  {paresDesconectados} par(es) de vértices sem caminho");
+            }
+        }
+
+        public void verificarAciclico()
+        {
+            Console.WriteLine("\n=== Verificação Acíclico ===");
+            Console.WriteLine("Propriedade: Não possui ciclos");
+            Console.WriteLine("Verifica se não há caminho de um vértice para ele mesmo\n");
+            
+            int[,] rInf = obterRInfinito();
+            bool eAciclico = true;
+            List<int> verticesEmCiclo = new List<int>();
+            
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                if (rInf[i, i] == 1)
+                {
+                    eAciclico = false;
+                    verticesEmCiclo.Add(i);
+                }
+            }
+            
+            if (eAciclico)
+            {
+                Console.WriteLine("✓ O grafo É ACÍCLICO (DAG)");
+                Console.WriteLine("  Não há ciclos no grafo");
+            }
+            else
+            {
+                Console.WriteLine("✗ O grafo NÃO É ACÍCLICO");
+                Console.WriteLine($"  {verticesEmCiclo.Count} vértice(s) em ciclo:");
+                foreach (int v in verticesEmCiclo)
+                {
+                    Console.WriteLine($"    - Vértice {v} faz parte de um ciclo");
+                }
+            }
+        }
+
+        public void verificarRelacaoEquivalencia()
+        {
+            Console.WriteLine("\n=== Verificação Relação de Equivalência ===");
+            Console.WriteLine("Propriedade: Reflexiva + Simétrica + Transitiva\n");
+            
+            bool reflexiva = eReflexiva();
+            bool simetrica = eSimetrica();
+            bool transitiva = verificarTransitividade();
+            
+            Console.WriteLine($"  Reflexiva: {(reflexiva ? "✓ SIM" : "✗ NÃO")}");
+            Console.WriteLine($"  Simétrica: {(simetrica ? "✓ SIM" : "✗ NÃO")}");
+            Console.WriteLine($"  Transitiva: {(transitiva ? "✓ SIM" : "✗ NÃO")}");
+            
+            if (reflexiva && simetrica && transitiva)
+            {
+                Console.WriteLine("\n✓ É UMA RELAÇÃO DE EQUIVALÊNCIA");
+                Console.WriteLine("  Particiona os vértices em classes de equivalência");
+            }
+            else
+            {
+                Console.WriteLine("\n✗ NÃO É UMA RELAÇÃO DE EQUIVALÊNCIA");
+            }
+        }
+
+        public void verificarOrdemParcial()
+        {
+            Console.WriteLine("\n=== Verificação Ordem Parcial ===");
+            Console.WriteLine("Propriedade: Reflexiva + Antissimétrica + Transitiva\n");
+            
+            bool reflexiva = eReflexiva();
+            bool transitiva = verificarTransitividade();
+            
+            // Verifica antissimétrica
+            bool antissimetrica = true;
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = i + 1; j < numeroDeVertices; j++)
+                {
+                    if (matrizAdjacencia[i, j] == 1 && matrizAdjacencia[j, i] == 1)
+                    {
+                        antissimetrica = false;
+                        break;
+                    }
+                }
+                if (!antissimetrica) break;
+            }
+            
+            Console.WriteLine($"  Reflexiva: {(reflexiva ? "✓ SIM" : "✗ NÃO")}");
+            Console.WriteLine($"  Antissimétrica: {(antissimetrica ? "✓ SIM" : "✗ NÃO")}");
+            Console.WriteLine($"  Transitiva: {(transitiva ? "✓ SIM" : "✗ NÃO")}");
+            
+            if (reflexiva && antissimetrica && transitiva)
+            {
+                Console.WriteLine("\n✓ É UMA RELAÇÃO DE ORDEM PARCIAL");
+                Console.WriteLine("  Define uma hierarquia entre os vértices");
+            }
+            else
+            {
+                Console.WriteLine("\n✗ NÃO É UMA RELAÇÃO DE ORDEM PARCIAL");
+            }
+        }
+
+        public void verificarTodasPropriedades()
+        {
+            Console.WriteLine("\n" + new string('=', 60));
+            Console.WriteLine("ANÁLISE COMPLETA DE PROPRIEDADES DO GRAFO");
+            Console.WriteLine(new string('=', 60));
+            
+            verificarReflexivaDetalhado();
+            verificarIrreflexivaDetalhado();
+            verificarSimetricaDetalhado();
+            verificarAntissimetricaDetalhado();
+            verificarTransitividadeDetalhado();
+            verificarFortementeConexo();
+            verificarAciclico();
+            verificarRelacaoEquivalencia();
+            verificarOrdemParcial();
+            
+            Console.WriteLine("\n" + new string('=', 60));
+        }
+
+
         public int[,] obterCaminho2()
         {
             int[,] caminho2 = new int[numeroDeVertices, numeroDeVertices];
@@ -376,6 +600,169 @@ namespace MatrizGrafo
         public void desenharGrafoOriginal()
         {
             desenharGrafo(matrizAdjacencia, "GRAFO ORIGINAL - Matriz de Adjacência");
+        }
+
+        public void gerarImagemGrafo(int[,] matriz, string nomeArquivo, string titulo)
+        {
+            int largura = 800;
+            int altura = 600;
+            int raioVertice = 25;
+            
+            using (var surface = SKSurface.Create(new SKImageInfo(largura, altura)))
+            {
+                var canvas = surface.Canvas;
+                canvas.Clear(SKColors.White);
+                
+                // Calcula posições dos vértices em círculo
+                SKPoint[] posicoes = new SKPoint[numeroDeVertices];
+                int centroX = largura / 2;
+                int centroY = altura / 2;
+                int raioCirculo = Math.Min(largura, altura) / 2 - 80;
+                
+                for (int i = 0; i < numeroDeVertices; i++)
+                {
+                    double angulo = 2 * Math.PI * i / numeroDeVertices - Math.PI / 2;
+                    posicoes[i] = new SKPoint(
+                        centroX + (float)(raioCirculo * Math.Cos(angulo)),
+                        centroY + (float)(raioCirculo * Math.Sin(angulo))
+                    );
+                }
+                
+                // Desenha arestas
+                using (var paintAresta = new SKPaint())
+                {
+                    paintAresta.Color = SKColors.Black;
+                    paintAresta.StrokeWidth = 2;
+                    paintAresta.Style = SKPaintStyle.Stroke;
+                    paintAresta.IsAntialias = true;
+                    
+                    for (int i = 0; i < numeroDeVertices; i++)
+                    {
+                        for (int j = 0; j < numeroDeVertices; j++)
+                        {
+                            if (matriz[i, j] == 1)
+                            {
+                                if (i == j)
+                                {
+                                    // Desenha laço
+                                    float loopSize = 20;
+                                    SKRect loopRect = new SKRect(
+                                        posicoes[i].X - loopSize / 2,
+                                        posicoes[i].Y - raioVertice - loopSize,
+                                        posicoes[i].X + loopSize / 2,
+                                        posicoes[i].Y - raioVertice
+                                    );
+                                    canvas.DrawOval(loopRect, paintAresta);
+                                }
+                                else
+                                {
+                                    // Calcula ponto inicial e final ajustados
+                                    float dx = posicoes[j].X - posicoes[i].X;
+                                    float dy = posicoes[j].Y - posicoes[i].Y;
+                                    float dist = (float)Math.Sqrt(dx * dx + dy * dy);
+                                    
+                                    float x1 = posicoes[i].X + dx / dist * raioVertice;
+                                    float y1 = posicoes[i].Y + dy / dist * raioVertice;
+                                    float x2 = posicoes[j].X - dx / dist * raioVertice;
+                                    float y2 = posicoes[j].Y - dy / dist * raioVertice;
+                                    
+                                    canvas.DrawLine(x1, y1, x2, y2, paintAresta);
+                                    
+                                    // Desenha seta
+                                    float arrowSize = 10;
+                                    float angle = (float)Math.Atan2(dy, dx);
+                                    
+                                    using (var path = new SKPath())
+                                    {
+                                        path.MoveTo(x2, y2);
+                                        path.LineTo(
+                                            x2 - arrowSize * (float)Math.Cos(angle - Math.PI / 6),
+                                            y2 - arrowSize * (float)Math.Sin(angle - Math.PI / 6)
+                                        );
+                                        path.MoveTo(x2, y2);
+                                        path.LineTo(
+                                            x2 - arrowSize * (float)Math.Cos(angle + Math.PI / 6),
+                                            y2 - arrowSize * (float)Math.Sin(angle + Math.PI / 6)
+                                        );
+                                        canvas.DrawPath(path, paintAresta);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Desenha vértices
+                using (var paintVertice = new SKPaint())
+                using (var paintBorda = new SKPaint())
+                using (var paintTexto = new SKPaint())
+                {
+                    paintVertice.Color = SKColors.LightBlue;
+                    paintVertice.Style = SKPaintStyle.Fill;
+                    paintVertice.IsAntialias = true;
+                    
+                    paintBorda.Color = SKColors.Black;
+                    paintBorda.StrokeWidth = 2;
+                    paintBorda.Style = SKPaintStyle.Stroke;
+                    paintBorda.IsAntialias = true;
+                    
+                    paintTexto.Color = SKColors.Black;
+                    paintTexto.TextSize = 16;
+                    paintTexto.IsAntialias = true;
+                    paintTexto.TextAlign = SKTextAlign.Center;
+                    paintTexto.Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold);
+                    
+                    for (int i = 0; i < numeroDeVertices; i++)
+                    {
+                        canvas.DrawCircle(posicoes[i].X, posicoes[i].Y, raioVertice, paintVertice);
+                        canvas.DrawCircle(posicoes[i].X, posicoes[i].Y, raioVertice, paintBorda);
+                        
+                        string texto = (i + 1).ToString();
+                        SKRect bounds = new SKRect();
+                        paintTexto.MeasureText(texto, ref bounds);
+                        canvas.DrawText(texto, posicoes[i].X, posicoes[i].Y - bounds.MidY, paintTexto);
+                    }
+                }
+                
+                // Desenha título
+                using (var paintTitulo = new SKPaint())
+                {
+                    paintTitulo.Color = SKColors.Black;
+                    paintTitulo.TextSize = 20;
+                    paintTitulo.IsAntialias = true;
+                    paintTitulo.TextAlign = SKTextAlign.Center;
+                    paintTitulo.Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold);
+                    
+                    canvas.DrawText(titulo, largura / 2, 30, paintTitulo);
+                }
+                
+                // Salva imagem
+                using (var image = surface.Snapshot())
+                using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+                using (var stream = File.OpenWrite(nomeArquivo))
+                {
+                    data.SaveTo(stream);
+                }
+                
+                Console.WriteLine($"\n✓ Imagem salva: {nomeArquivo}");
+            }
+        }
+
+        public void gerarImagemGrafoOriginal(string nomeArquivo)
+        {
+            gerarImagemGrafo(matrizAdjacencia, nomeArquivo, "Grafo Original");
+        }
+
+        public void gerarImagemGrafoR2(string nomeArquivo)
+        {
+            int[,] r2 = obterCaminho2();
+            gerarImagemGrafo(r2, nomeArquivo, "Grafo R² - Caminhos de Comprimento 2");
+        }
+
+        public void gerarImagemGrafoRInfinito(string nomeArquivo)
+        {
+            int[,] rInf = obterRInfinito();
+            gerarImagemGrafo(rInf, nomeArquivo, "Grafo R∞ - Fecho Transitivo");
         }
 
 

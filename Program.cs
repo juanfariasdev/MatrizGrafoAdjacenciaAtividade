@@ -66,9 +66,13 @@ namespace MatrizGrafo
             Console.WriteLine("6. Matriz Conexividade");
             Console.WriteLine("7. Selecionar Grafo");
             Console.WriteLine("8. Mostrar R² (Caminhos de Comprimento 2)");
-            Console.WriteLine("9. Desenhar Grafo Original");
-            Console.WriteLine("10. Desenhar Grafo R²");
-            Console.WriteLine("11. Desenhar Grafo R∞");
+            Console.WriteLine("9. Desenhar Grafo Original (ASCII)");
+            Console.WriteLine("10. Desenhar Grafo R² (ASCII)");
+            Console.WriteLine("11. Desenhar Grafo R∞ (ASCII)");
+            Console.WriteLine("12. Gerar Imagem Grafo Original");
+            Console.WriteLine("13. Gerar Imagem Grafo R²");
+            Console.WriteLine("14. Gerar Imagem Grafo R∞");
+            Console.WriteLine("15. Análise Completa de Propriedades");
             Console.WriteLine("0. Sair");
             Console.Write("\nEscolha uma opção: ");
             
@@ -153,6 +157,24 @@ namespace MatrizGrafo
                         break;
                     case 11:
                         meuGrafo.desenharGrafoRInfinito();
+                        break;
+                    case 12:
+                        string nomeGrafo = Path.GetFileNameWithoutExtension(arquivoAtual);
+                        string nomeArquivo = $"grafo_{nomeGrafo}.png";
+                        meuGrafo.gerarImagemGrafoOriginal(nomeArquivo);
+                        break;
+                    case 13:
+                        nomeGrafo = Path.GetFileNameWithoutExtension(arquivoAtual);
+                        nomeArquivo = $"grafo_r2_{nomeGrafo}.png";
+                        meuGrafo.gerarImagemGrafoR2(nomeArquivo);
+                        break;
+                    case 14:
+                        nomeGrafo = Path.GetFileNameWithoutExtension(arquivoAtual);
+                        nomeArquivo = $"grafo_rinf_{nomeGrafo}.png";
+                        meuGrafo.gerarImagemGrafoRInfinito(nomeArquivo);
+                        break;
+                    case 15:
+                        meuGrafo.verificarTodasPropriedades();
                         break;
                     case 0:
                         Console.WriteLine("Saindo...");
