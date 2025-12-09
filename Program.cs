@@ -73,6 +73,7 @@ namespace MatrizGrafo
             Console.WriteLine("13. Gerar Imagem Grafo R²");
             Console.WriteLine("14. Gerar Imagem Grafo R∞");
             Console.WriteLine("15. Análise Completa de Propriedades");
+            Console.WriteLine("16. Progressão Completa: R → R² → R³ → ... → R∞");
             Console.WriteLine("0. Sair");
             Console.Write("\nEscolha uma opção: ");
             
@@ -175,6 +176,9 @@ namespace MatrizGrafo
                         break;
                     case 15:
                         meuGrafo.verificarTodasPropriedades();
+                        break;
+                    case 16:
+                        meuGrafo.mostrarProgressaoAteRInfinito();
                         break;
                     case 0:
                         Console.WriteLine("Saindo...");

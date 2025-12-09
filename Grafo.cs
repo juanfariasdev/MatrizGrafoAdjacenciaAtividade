@@ -459,6 +459,170 @@ namespace MatrizGrafo
             return true;
         }
 
+        // Multiplica duas matrizes usando multiplicação booleana
+        private int[,] multiplicarMatrizes(int[,] a, int[,] b)
+        {
+            int[,] resultado = new int[numeroDeVertices, numeroDeVertices];
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = 0; j < numeroDeVertices; j++)
+                {
+                    for (int k = 0; k < numeroDeVertices; k++)
+                    {
+                        resultado[i, j] += a[i, k] * b[k, j];
+                    }
+                }
+            }
+            return resultado;
+        }
+
+        // Verifica se duas matrizes são iguais
+        private bool matrizesIguais(int[,] a, int[,] b)
+        {
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = 0; j < numeroDeVertices; j++)
+                {
+                    bool aTemAresta = a[i, j] > 0;
+                    bool bTemAresta = b[i, j] > 0;
+                    if (aTemAresta != bTemAresta)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public void mostrarProgressaoAteRInfinito()
+        {
+            Console.WriteLine("\n" + new string('=', 70));
+            Console.WriteLine("PROGRESSÃO COMPLETA: R → R² → R³ → ... → R∞");
+            Console.WriteLine(new string('=', 70));
+            Console.WriteLine("\nCalculando todas as potências de R até convergir para R∞...\n");
+
+            List<int[,]> potencias = new List<int[,]>();
+            
+            // R¹ = R (matriz original)
+            potencias.Add((int[,])matrizAdjacencia.Clone());
+            
+            // Calcula R², R³, R⁴, ... até convergir
+            int[,] potenciaAtual = matrizAdjacencia;
+            int n = 1;
+            
+            while (n < numeroDeVertices)
+            {
+                n++;
+                int[,] proximaPotencia = multiplicarMatrizes(potenciaAtual, matrizAdjacencia);
+                potencias.Add(proximaPotencia);
+                
+                // Verifica se convergiu (R^n = R^(n-1) em termos booleanos)
+                if (matrizesIguais(proximaPotencia, potenciaAtual))
+                {
+                    Console.WriteLine($"✓ Convergência alcançada em R^{n}!");
+                    Console.WriteLine($"  R^{n} = R^{n-1} (em termos booleanos)\n");
+                    break;
+                }
+                
+                potenciaAtual = proximaPotencia;
+            }
+
+            // Calcula R∞ (fecho transitivo)
+            int[,] rInf = obterRInfinito();
+            
+            // Mostra cada potência
+            for (int i = 0; i < potencias.Count; i++)
+            {
+                int potencia = i + 1;
+                Console.WriteLine(new string('-', 70));
+                
+                if (potencia == 1)
+                {
+                    Console.WriteLine($"R^{potencia} = R (Matriz Original)");
+                }
+                else
+                {
+                    Console.WriteLine($"R^{potencia} = R^{potencia-1} × R (Caminhos de comprimento {potencia})");
+                }
+                
+                Console.WriteLine(new string('-', 70));
+                
+                // Conta arestas
+                int totalArestas = 0;
+                int arestasUnicas = 0;
+                for (int row = 0; row < numeroDeVertices; row++)
+                {
+                    for (int col = 0; col < numeroDeVertices; col++)
+                    {
+                        if (potencias[i][row, col] > 0)
+                        {
+                            totalArestas += potencias[i][row, col];
+                            arestasUnicas++;
+                        }
+                    }
+                }
+                
+                Console.WriteLine($"Total de caminhos: {totalArestas}");
+                Console.WriteLine($"Arestas únicas: {arestasUnicas}\n");
+                
+                // Mostra matriz compacta
+                Console.Write("Matriz: ");
+                for (int row = 0; row < numeroDeVertices; row++)
+                {
+                    if (row > 0) Console.Write("        ");
+                    Console.Write("[");
+                    for (int col = 0; col < numeroDeVertices; col++)
+                    {
+                        if (potencias[i][row, col] > 0)
+                            Console.Write("1");
+                        else
+                            Console.Write("0");
+                        if (col < numeroDeVertices - 1) Console.Write(" ");
+                    }
+                    Console.WriteLine("]");
+                }
+                Console.WriteLine();
+            }
+
+            // Mostra R∞
+            Console.WriteLine(new string('=', 70));
+            Console.WriteLine("R∞ (FECHO TRANSITIVO - Algoritmo de Warshall)");
+            Console.WriteLine(new string('=', 70));
+            
+            int arestasRInf = 0;
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = 0; j < numeroDeVertices; j++)
+                {
+                    if (rInf[i, j] > 0) arestasRInf++;
+                }
+            }
+            
+            Console.WriteLine($"Arestas em R∞: {arestasRInf}\n");
+            
+            Console.Write("Matriz: ");
+            for (int row = 0; row < numeroDeVertices; row++)
+            {
+                if (row > 0) Console.Write("        ");
+                Console.Write("[");
+                for (int col = 0; col < numeroDeVertices; col++)
+                {
+                    if (rInf[row, col] > 0)
+                        Console.Write("1");
+                    else
+                        Console.Write("0");
+                    if (col < numeroDeVertices - 1) Console.Write(" ");
+                }
+                Console.WriteLine("]");
+            }
+            
+            Console.WriteLine("\n" + new string('=', 70));
+            Console.WriteLine($"RESUMO: Foram necessárias {potencias.Count} potências para convergir");
+            Console.WriteLine($"R∞ representa todos os caminhos possíveis no grafo");
+            Console.WriteLine(new string('=', 70));
+        }
+
+
         public int[,] obterRInfinito()
         {
             int[,] rInfinito = new int[numeroDeVertices, numeroDeVertices];
@@ -512,7 +676,7 @@ namespace MatrizGrafo
             {
                 for (int j = 0; j < numeroDeVertices; j++)
                 {
-                    if (matriz[i, j] == 1)
+                    if (matriz[i, j] > 0)
                     {
                         if (i == j)
                         {
@@ -561,16 +725,16 @@ namespace MatrizGrafo
                 List<int> destinos = new List<int>();
                 for (int j = 0; j < numeroDeVertices; j++)
                 {
-                    if (matriz[i, j] == 1 && i != j)
+                    if (matriz[i, j] > 0 && i != j)
                     {
                         destinos.Add(j + 1); // Adiciona j+1 para numeração 1-based
                     }
                 }
                 
-                if (destinos.Count > 0 || matriz[i, i] == 1)
+                if (destinos.Count > 0 || matriz[i, i] > 0)
                 {
                     string linha = $"│ [{i + 1}]";
-                    if (matriz[i, i] == 1)
+                    if (matriz[i, i] > 0)
                     {
                         linha += " ⟲";
                     }
@@ -587,8 +751,65 @@ namespace MatrizGrafo
 
         public void desenharGrafoR2()
         {
+            Console.WriteLine("\n" + new string('=', 70));
+            Console.WriteLine("CÁLCULO DE R² - CAMINHOS DE COMPRIMENTO 2");
+            Console.WriteLine(new string('=', 70));
+            Console.WriteLine("\nR² é obtido pela multiplicação booleana: R² = R × R");
+            Console.WriteLine("Cada aresta em R² representa um caminho de comprimento 2 em R");
+            Console.WriteLine("Ou seja: R²[i,j] = 1 se existe k tal que R[i,k]=1 E R[k,j]=1\n");
+            
             int[,] r2 = obterCaminho2();
-            desenharGrafo(r2, "GRAFO R² - Caminhos de Comprimento 2");
+            
+            // Mostra como cada aresta de R² foi formada
+            Console.WriteLine("EXPLICAÇÃO: Como cada aresta de R² foi formada");
+            Console.WriteLine(new string('-', 70));
+            
+            int totalCaminhos = 0;
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = 0; j < numeroDeVertices; j++)
+                {
+                    if (r2[i, j] > 0)
+                    {
+                        // Encontra todos os caminhos intermediários
+                        List<int> intermediarios = new List<int>();
+                        for (int k = 0; k < numeroDeVertices; k++)
+                        {
+                            if (matrizAdjacencia[i, k] == 1 && matrizAdjacencia[k, j] == 1)
+                            {
+                                intermediarios.Add(k + 1); // +1 para numeração 1-based
+                            }
+                        }
+                        
+                        if (intermediarios.Count > 0)
+                        {
+                            totalCaminhos++;
+                            Console.Write($"  R²[{i+1},{j+1}] = {r2[i,j]} ");
+                            
+                            if (intermediarios.Count == 1)
+                            {
+                                Console.WriteLine($"← caminho: {i+1}→{intermediarios[0]}→{j+1}");
+                            }
+                            else
+                            {
+                                Console.Write($"← {intermediarios.Count} caminhos: ");
+                                List<string> caminhos = new List<string>();
+                                foreach (int k in intermediarios)
+                                {
+                                    caminhos.Add($"{i+1}→{k}→{j+1}");
+                                }
+                                Console.WriteLine(string.Join(", ", caminhos));
+                            }
+                        }
+                    }
+                }
+            }
+            
+            Console.WriteLine($"\nTotal: {totalCaminhos} arestas em R² (caminhos de comprimento 2)");
+            Console.WriteLine(new string('=', 70));
+            
+            // Agora mostra o grafo R²
+            desenharGrafo(r2, "\nGRAFO R² - Visualização");
         }
 
         public void desenharGrafoRInfinito()
@@ -640,7 +861,7 @@ namespace MatrizGrafo
                     {
                         for (int j = 0; j < numeroDeVertices; j++)
                         {
-                            if (matriz[i, j] == 1)
+                            if (matriz[i, j] > 0)
                             {
                                 if (i == j)
                                 {
