@@ -65,6 +65,10 @@ namespace MatrizGrafo
             Console.WriteLine("5. Matriz R infinito");
             Console.WriteLine("6. Matriz Conexividade");
             Console.WriteLine("7. Selecionar Grafo");
+            Console.WriteLine("8. Mostrar R² (Caminhos de Comprimento 2)");
+            Console.WriteLine("9. Desenhar Grafo Original");
+            Console.WriteLine("10. Desenhar Grafo R²");
+            Console.WriteLine("11. Desenhar Grafo R∞");
             Console.WriteLine("0. Sair");
             Console.Write("\nEscolha uma opção: ");
             
@@ -135,6 +139,20 @@ namespace MatrizGrafo
                         {
                             Console.WriteLine("\nSeleção cancelada.");
                         }
+                        break;
+                    case 8:
+                        Console.WriteLine("\nMatriz R² (Caminhos de Comprimento 2):");
+                        int[,] r2 = meuGrafo.obterCaminho2();
+                        imprimirMatriz(r2);
+                        break;
+                    case 9:
+                        meuGrafo.desenharGrafoOriginal();
+                        break;
+                    case 10:
+                        meuGrafo.desenharGrafoR2();
+                        break;
+                    case 11:
+                        meuGrafo.desenharGrafoRInfinito();
                         break;
                     case 0:
                         Console.WriteLine("Saindo...");

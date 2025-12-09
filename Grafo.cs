@@ -276,6 +276,107 @@ namespace MatrizGrafo
             return conexividade;
         }
 
+        public void desenharGrafo(int[,] matriz, string titulo)
+        {
+            Console.WriteLine($"\n{titulo}");
+            Console.WriteLine(new string('=', titulo.Length));
+            Console.WriteLine();
+            
+            // Lista todas as arestas
+            List<string> arestas = new List<string>();
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = 0; j < numeroDeVertices; j++)
+                {
+                    if (matriz[i, j] == 1)
+                    {
+                        if (i == j)
+                        {
+                            arestas.Add($"  {i} ⟲ (laço)");
+                        }
+                        else
+                        {
+                            arestas.Add($"  {i} → {j}");
+                        }
+                    }
+                }
+            }
+            
+            if (arestas.Count == 0)
+            {
+                Console.WriteLine("Grafo vazio (sem arestas)");
+                return;
+            }
+            
+            Console.WriteLine($"Vértices: {numeroDeVertices}");
+            Console.WriteLine($"Arestas: {arestas.Count}");
+            Console.WriteLine("\nLista de Arestas:");
+            
+            // Mostra em colunas para melhor visualização
+            int coluna = 0;
+            foreach (string aresta in arestas)
+            {
+                Console.Write(aresta.PadRight(15));
+                coluna++;
+                if (coluna % 4 == 0)
+                {
+                    Console.WriteLine();
+                }
+            }
+            if (coluna % 4 != 0)
+            {
+                Console.WriteLine();
+            }
+            
+            // Desenho visual simplificado
+            Console.WriteLine("\nRepresentação Visual:");
+            Console.WriteLine("┌─────────────────────────────────────────┐");
+            
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                List<int> destinos = new List<int>();
+                for (int j = 0; j < numeroDeVertices; j++)
+                {
+                    if (matriz[i, j] == 1 && i != j)
+                    {
+                        destinos.Add(j);
+                    }
+                }
+                
+                if (destinos.Count > 0 || matriz[i, i] == 1)
+                {
+                    string linha = $"│ [{i}]";
+                    if (matriz[i, i] == 1)
+                    {
+                        linha += " ⟲";
+                    }
+                    if (destinos.Count > 0)
+                    {
+                        linha += " → " + string.Join(", ", destinos);
+                    }
+                    Console.WriteLine(linha.PadRight(43) + "│");
+                }
+            }
+            
+            Console.WriteLine("└─────────────────────────────────────────┘");
+        }
+
+        public void desenharGrafoR2()
+        {
+            int[,] r2 = obterCaminho2();
+            desenharGrafo(r2, "GRAFO R² - Caminhos de Comprimento 2");
+        }
+
+        public void desenharGrafoRInfinito()
+        {
+            int[,] rInf = obterRInfinito();
+            desenharGrafo(rInf, "GRAFO R∞ - Fecho Transitivo (Todos os Caminhos)");
+        }
+
+        public void desenharGrafoOriginal()
+        {
+            desenharGrafo(matrizAdjacencia, "GRAFO ORIGINAL - Matriz de Adjacência");
+        }
 
 
     }
