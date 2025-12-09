@@ -16,15 +16,55 @@ namespace MatrizGrafo
             }
         }
         
-        static int menu()
+        static string selecionarGrafo()
+        {
+            string pastaGrafos = "GrafosAlunos";
+            
+            if (!Directory.Exists(pastaGrafos))
+            {
+                Console.WriteLine($"Pasta {pastaGrafos} não encontrada!");
+                return null;
+            }
+            
+            string[] arquivos = Directory.GetFiles(pastaGrafos, "*.txt");
+            
+            if (arquivos.Length == 0)
+            {
+                Console.WriteLine("Nenhum arquivo de grafo encontrado!");
+                return null;
+            }
+            
+            Console.WriteLine("\n=== Grafos Disponíveis ===");
+            for (int i = 0; i < arquivos.Length; i++)
+            {
+                string nomeArquivo = Path.GetFileNameWithoutExtension(arquivos[i]);
+                Console.WriteLine($"{i + 1}. {nomeArquivo}");
+            }
+            
+            Console.Write($"\nEscolha um grafo (1-{arquivos.Length}) ou 0 para cancelar: ");
+            int escolha;
+            while (!int.TryParse(Console.ReadLine(), out escolha) || escolha < 0 || escolha > arquivos.Length)
+            {
+                Console.Write($"Entrada inválida. Digite um número entre 0 e {arquivos.Length}: ");
+            }
+            
+            if (escolha == 0)
+                return null;
+                
+            return arquivos[escolha - 1];
+        }
+        
+        static int menu(string arquivoAtual)
         {
             Console.WriteLine("\n=== Menu de Opções ===");
-            Console.WriteLine("1. Adicionar Aresta");
+            Console.WriteLine($"Grafo atual: {Path.GetFileNameWithoutExtension(arquivoAtual)}");
+            Console.WriteLine("\n1. Adicionar Aresta");
             Console.WriteLine("2. Remover Aresta");
             Console.WriteLine("3. Mostrar Matriz");
             Console.WriteLine("4. Verificar Propriedades");
             Console.WriteLine("5. Matriz R infinito");
             Console.WriteLine("6. Matriz Conexividade");
+            Console.WriteLine("7. Selecionar Grafo");
             Console.WriteLine("0. Sair");
             Console.Write("\nEscolha uma opção: ");
             
@@ -39,27 +79,63 @@ namespace MatrizGrafo
         static void Main(string[] args)
         {
             Grafo meuGrafo = new Grafo(10);
-            meuGrafo.carregarMatrizDeArquivo("matrizSimetrica.txt");
+            string arquivoAtual = "matrizSimetrica.txt";
+            meuGrafo.carregarMatrizDeArquivo(arquivoAtual);
             int opcao=0;
             do
             {
-               opcao = menu();
+               opcao = menu(arquivoAtual);
                 switch (opcao)
                 {
                     case 1:
-                        
+                        Console.Write("Digite o vértice de origem: ");
+                        int origem = int.Parse(Console.ReadLine());
+                        Console.Write("Digite o vértice de destino: ");
+                        int destino = int.Parse(Console.ReadLine());
+                        meuGrafo.adicionarAresta(origem, destino);
+                        Console.WriteLine($"Aresta adicionada: {origem} -> {destino}");
                         break;
                     case 2:
-                       
+                        Console.Write("Digite o vértice de origem: ");
+                        origem = int.Parse(Console.ReadLine());
+                        Console.Write("Digite o vértice de destino: ");
+                        destino = int.Parse(Console.ReadLine());
+                        meuGrafo.removerAresta(origem, destino);
+                        Console.WriteLine($"Aresta removida: {origem} -> {destino}");
                         break;
                     case 3:
-                        
+                        Console.WriteLine("\nMatriz de Adjacência:");
+                        meuGrafo.mostrarMatriz();
+                        break;
                     case 4:
-                        
+                        meuGrafo.verificarReflexivaDetalhado();
+                        meuGrafo.verificarSimetricaDetalhado();
+                        meuGrafo.verificarTransitividadeDetalhado();
+                        break;
                     case 5:
-                        
+                        Console.WriteLine("\nMatriz R∞ (Fecho Transitivo):");
+                        int[,] rInfinito = meuGrafo.obterRInfinito();
+                        imprimirMatriz(rInfinito);
+                        break;
                     case 6:
-                        
+                        Console.WriteLine("\nMatriz de Conexividade:");
+                        int[,] conexividade = meuGrafo.obterMatrizConexividade();
+                        imprimirMatriz(conexividade);
+                        break;
+                    case 7:
+                        string novoArquivo = selecionarGrafo();
+                        if (novoArquivo != null)
+                        {
+                            arquivoAtual = novoArquivo;
+                            meuGrafo = new Grafo(10);
+                            meuGrafo.carregarMatrizDeArquivo(arquivoAtual);
+                            Console.WriteLine($"\nGrafo '{Path.GetFileNameWithoutExtension(arquivoAtual)}' carregado com sucesso!");
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nSeleção cancelada.");
+                        }
+                        break;
                     case 0:
                         Console.WriteLine("Saindo...");
                         break;
@@ -67,8 +143,12 @@ namespace MatrizGrafo
                         Console.WriteLine("Opção inválida. Tente novamente.");
                         break;
                 }
-                Console.ReadLine();
-                Console.Clear();
+                if (opcao != 0)
+                {
+                    Console.WriteLine("\nPressione ENTER para continuar...");
+                    Console.ReadLine();
+                    Console.Clear();
+                }
             }while (opcao != 0);
         }
     }

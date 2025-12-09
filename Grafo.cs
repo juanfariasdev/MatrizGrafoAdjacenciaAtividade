@@ -54,14 +54,153 @@ namespace MatrizGrafo
 
         public bool eReflexiva()
         {
-            //implementar
-            return false;
+            // Verifica se todos os elementos da diagonal principal são 1
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                if (matrizAdjacencia[i, i] != 1)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public bool eSimetrica()
         {
-            //implementar
-            return false;
+            // Verifica se matriz[i,j] == matriz[j,i] para todos i,j
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = 0; j < numeroDeVertices; j++)
+                {
+                    if (matrizAdjacencia[i, j] != matrizAdjacencia[j, i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public void verificarReflexivaDetalhado()
+        {
+            Console.WriteLine("\n=== Verificação Reflexiva Detalhada ===");
+            Console.WriteLine("Propriedade: Todos os elementos da diagonal principal devem ser 1");
+            Console.WriteLine("Ou seja: R[i,i] = 1 para todo vértice i\n");
+            
+            bool eReflexiva = true;
+            List<int> verticesFalham = new List<int>();
+            
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                if (matrizAdjacencia[i, i] != 1)
+                {
+                    eReflexiva = false;
+                    verticesFalham.Add(i);
+                }
+            }
+            
+            if (eReflexiva)
+            {
+                Console.WriteLine("✓ O grafo É REFLEXIVO");
+                Console.WriteLine("  Todos os vértices possuem laço (aresta para si mesmo)");
+            }
+            else
+            {
+                Console.WriteLine("✗ O grafo NÃO É REFLEXIVO");
+                Console.WriteLine($"  Faltam laços em {verticesFalham.Count} vértice(s):");
+                foreach (int v in verticesFalham)
+                {
+                    Console.WriteLine($"    - Vértice {v}: R[{v},{v}] = {matrizAdjacencia[v, v]} (deveria ser 1)");
+                }
+            }
+        }
+
+        public void verificarSimetricaDetalhado()
+        {
+            Console.WriteLine("\n=== Verificação Simétrica Detalhada ===");
+            Console.WriteLine("Propriedade: R[i,j] = R[j,i] para todos os pares (i,j)");
+            Console.WriteLine("Ou seja: se há aresta de i para j, deve haver de j para i\n");
+            
+            bool eSimetrica = true;
+            List<string> paresAssimetricos = new List<string>();
+            
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = i + 1; j < numeroDeVertices; j++) // Evita verificar duas vezes
+                {
+                    if (matrizAdjacencia[i, j] != matrizAdjacencia[j, i])
+                    {
+                        eSimetrica = false;
+                        paresAssimetricos.Add($"R[{i},{j}]={matrizAdjacencia[i, j]} ≠ R[{j},{i}]={matrizAdjacencia[j, i]}");
+                    }
+                }
+            }
+            
+            if (eSimetrica)
+            {
+                Console.WriteLine("✓ O grafo É SIMÉTRICO");
+                Console.WriteLine("  Todas as arestas são bidirecionais");
+            }
+            else
+            {
+                Console.WriteLine("✗ O grafo NÃO É SIMÉTRICO");
+                Console.WriteLine($"  Encontradas {paresAssimetricos.Count} assimetria(s):");
+                foreach (string par in paresAssimetricos)
+                {
+                    Console.WriteLine($"    - {par}");
+                }
+            }
+        }
+
+        public void verificarTransitividadeDetalhado()
+        {
+            Console.WriteLine("\n=== Verificação Transitiva Detalhada ===");
+            Console.WriteLine("Propriedade: Se R[i,k]=1 e R[k,j]=1, então R[i,j]=1");
+            Console.WriteLine("Ou seja: se há caminho i→k→j, deve haver aresta direta i→j\n");
+            
+            bool eTransitiva = true;
+            List<string> falhasTransitividade = new List<string>();
+            
+            for (int i = 0; i < numeroDeVertices; i++)
+            {
+                for (int j = 0; j < numeroDeVertices; j++)
+                {
+                    for (int k = 0; k < numeroDeVertices; k++)
+                    {
+                        if (matrizAdjacencia[i, k] == 1 && matrizAdjacencia[k, j] == 1 && matrizAdjacencia[i, j] == 0)
+                        {
+                            eTransitiva = false;
+                            string falha = $"Caminho {i}→{k}→{j} existe, mas falta aresta direta {i}→{j}";
+                            if (!falhasTransitividade.Contains(falha))
+                            {
+                                falhasTransitividade.Add(falha);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (eTransitiva)
+            {
+                Console.WriteLine("✓ O grafo É TRANSITIVO");
+                Console.WriteLine("  Todos os caminhos indiretos possuem aresta direta correspondente");
+            }
+            else
+            {
+                Console.WriteLine("✗ O grafo NÃO É TRANSITIVO");
+                Console.WriteLine($"  Encontradas {falhasTransitividade.Count} violação(ões):");
+                int count = 0;
+                foreach (string falha in falhasTransitividade)
+                {
+                    Console.WriteLine($"    - {falha}");
+                    count++;
+                    if (count >= 10) // Limita a 10 exemplos
+                    {
+                        Console.WriteLine($"    ... e mais {falhasTransitividade.Count - 10} violação(ões)");
+                        break;
+                    }
+                }
+            }
         }
 
         public int[,] obterCaminho2()
