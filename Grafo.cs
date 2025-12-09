@@ -516,11 +516,11 @@ namespace MatrizGrafo
                     {
                         if (i == j)
                         {
-                            arestas.Add($"  {i} ⟲ (laço)");
+                            arestas.Add($"  {i + 1} ⟲ (laço)");
                         }
                         else
                         {
-                            arestas.Add($"  {i} → {j}");
+                            arestas.Add($"  {i + 1} → {j + 1}");
                         }
                     }
                 }
@@ -563,13 +563,13 @@ namespace MatrizGrafo
                 {
                     if (matriz[i, j] == 1 && i != j)
                     {
-                        destinos.Add(j);
+                        destinos.Add(j + 1); // Adiciona j+1 para numeração 1-based
                     }
                 }
                 
                 if (destinos.Count > 0 || matriz[i, i] == 1)
                 {
-                    string linha = $"│ [{i}]";
+                    string linha = $"│ [{i + 1}]";
                     if (matriz[i, i] == 1)
                     {
                         linha += " ⟲";
